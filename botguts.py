@@ -61,12 +61,14 @@ class Slack_Bot(object):
         response = []
         for comm in self.bot_commands:
             if comm.use_this(command):
-                response.extend(comm.response(command))
-
-        response = [response] if isinstance(response, str) else response
+                answer = comm.response(command)
+                if isinstance(answer, str):
+                    response.append(comm.response(command))
+                else:
+                    response.extend(comm.response(command))
 
         if not response:
-            response = ["Sorry, I don't know what you're on about"]
+            response = ["Sorry, I don't know that command."]
 
         for out in response:
             print(out)
