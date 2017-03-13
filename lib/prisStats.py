@@ -26,8 +26,8 @@ bot_commands = []
 
 
 def link(wk, findWeek):
-    Date = lastFriday(wk).replace(" ", "-")
-    t = Date.lower()
+    date = lastFriday(wk).replace(" ", "-")
+    t = date.lower()
     if t[0] == "0":
         t = t[1:]
     r = []
@@ -53,7 +53,7 @@ def link(wk, findWeek):
                 mp = int(sh.cell(i, j + 1).value)
                 fp = int(sh.cell(i + 1, j + 1).value)
                 break
-    return [mp, fp, Date, findWeek, wk]
+    return [mp, fp, date, findWeek, wk]
 
 
 def handleResponse(y):
