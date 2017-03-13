@@ -17,8 +17,8 @@ class Bot_Command(object):
     """A container for a slack bot command that contains call and response"""
 
     def __init__(self,
-                 call='',
-                 response='',
+                 call,
+                 response,
                  name=None,
                  category='default',
                  docs="I don't know any more about this"):
@@ -58,12 +58,16 @@ class Slack_Bot(object):
         return None, None, None
 
     def handle_command(self, command, channel, ts):
-        response = ["Sorry, I don't know what you're on about"]
+        response = []
         for comm in self.bot_commands:
             if comm.use_this(command):
-                response = comm.response(command)
+                response.append(comm.response(command))
 
         response = [response] if isinstance(response, str) else response
+
+        if not response:
+            response = ["Sorry, I don't know what you're on about"]
+
         for out in response:
             print(out)
             slack_client.api_call("chat.postMessage", channel=channel, text=out, as_user=True)
@@ -79,7 +83,3 @@ class Slack_Bot(object):
                 time.sleep(READ_WEBSOCKET_DELAY)
         else:
             print("Connection failed.  Invalid Slack token or bot ID?")
-
-
-
-
