@@ -61,7 +61,7 @@ class Slack_Bot(object):
         response = []
         for comm in self.bot_commands:
             if comm.use_this(command):
-                response.append(comm.response(command))
+                response.extend(comm.response(command))
 
         response = [response] if isinstance(response, str) else response
 
