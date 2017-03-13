@@ -22,6 +22,7 @@ asdbot = Slack_Bot()
 with open('module_list.txt', 'r') as f:
     for line in f:
         mod = line.strip()
+        mod = mod.replace(r'/', '.')
         import_module(mod)
         asdbot.register(sys.modules[mod])
 
