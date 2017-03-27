@@ -46,3 +46,11 @@ def magic_8(string):
 
 magic8 = botguts.Bot_Command(call='magic8', response=magic_8)
 bot_commands.append(magic8)
+
+
+def suggestion(dummy_string):
+    return 'https://github.com/drdanjones/asdbot/issues/new'
+
+
+suggest = botguts.Bot_Command(call='suggest', response=suggestion)
+bot_commands.append(suggest)
