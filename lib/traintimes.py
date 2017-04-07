@@ -8,7 +8,6 @@ import botguts
 
 bot_commands = []
 
-
 def TrainTimes(origin,destination,time_input="now",day="today"):
 	# if time is set to now, make time equal to nearest 15 min
 	if time_input == "now":
@@ -43,6 +42,7 @@ def TrainTimes(origin,destination,time_input="now",day="today"):
 		if hit.text != "From" and hit.text != '':
 			d = re.sub('\s+', ' ', hit.text)
 			d = re.sub(r'\[[A-Z]{3}\]','', d)
+			d = re.sub(r'Platform \w+','', d)
 			Origins.append(d)
 
 	Destinations = []
@@ -50,6 +50,7 @@ def TrainTimes(origin,destination,time_input="now",day="today"):
 		if hit.text != "To" and hit.text != '':
 			d = re.sub('\s+', ' ', hit.text)
 			d = re.sub(r'\[[A-Z]{3}\]','', d)
+			d = re.sub(r'Platform \w+','', d)
 			Destinations.append(d)
 
 	Departs = []
@@ -87,8 +88,19 @@ def TrainTimes(origin,destination,time_input="now",day="today"):
 
 	SendToAceBot = []
 	for ori, des, dep, arr, dur, dela, pri, chg in zip(Origins, Destinations, Departs, Arrives,Duration, Delay, Fares, Changes):
-		SendToAceBot.append(ori + ' ' + des + ' ' + dep + ' ' + arr)
+		SendToAceBot.append(dep + ' ' +  ori + '->' + des + ' ' + arr)
 		SendToAceBot.append(dur + ' ' + dela + ' ' + pri + ' ' + chg)
+		SendToAceBot.append("")
+
+
+	if len(SendToAceBot) == 0:
+		SendToAceBot.append("For train times, type traintimes [origin destination time(optional) date(optional)] \
+        time in 24hr e.g. 15:00, date in format ddmmyy. Stations with more than one word should be \
+        written as one (e.g. LondonVictoria)")
+	else:
+		SendToAceBot.append("To see more fares and to purchase tickets go to:")
+		SendToAceBot.append(url)
+
 	return SendToAceBot
 	'''
 	# get first 5 trains
@@ -105,24 +117,31 @@ def TrainTimes(origin,destination,time_input="now",day="today"):
 	return journeys
 	'''
 def CallTrainTimes(command):
-    command_list = command.split()
+	command_list = command.split()
+	
+	command_list.remove("traintimes")
 
-    command_list.remove("traintimes")
-    try:
-        if len(command_list) == 4:
-            results = TrainTimes(command_list[0], command_list[1], command_list[2], command_list[3])
-        elif len(command_list) == 3:
-            results = TrainTimes(command_list[0], command_list[1], command_list[2])
-        elif len(command_list) == 2:
-            results = TrainTimes(command_list[0], command_list[1])
-    except (UnboundLocalError, ValueError):
-            results = "For train times, type traintimes [origin destination time(optional) date(optional)] \
-                time in 24hr e.g. 15:00, date in format ddmmyy"
-    return results
+	try:
+		if len(command_list) == 4:
+			results = TrainTimes(command_list[0], command_list[1], command_list[2], command_list[3])
+		elif len(command_list) == 3:
+			results = TrainTimes(command_list[0], command_list[1], command_list[2])
+		elif len(command_list) == 2:
+			results = TrainTimes(command_list[0], command_list[1])
+	
+		return results
 
-#x = CallTrainTimes("traintimes London Derby")
-#print(x)
+	except(UnboundLocalError, ValueError):
+		results = ["For train times, type traintimes [origin destination time(optional) date(optional)] \
+        time in 24hr e.g. 15:00, date in format ddmmyy. Stations with more than one word should be \
+        written as one (e.g. LondonVictoria)"]
 
+		return results
+
+#x = CallTrainTimes("traintimes London Brighton")
+#for y in x:
+#	print(y)
 
 trains = botguts.Bot_Command(call='traintimes', response=CallTrainTimes)
 bot_commands.append(trains)
+
